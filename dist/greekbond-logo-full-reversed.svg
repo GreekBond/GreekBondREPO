@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 380 300" role="img" aria-label="GreekBond">
+  <!-- Full lockup, reversed (white GB + white wordmark + gold columns) for dark backgrounds. -->
+  <g transform="translate(70,8)">
+    <text x="120" y="132" text-anchor="middle" font-family="Georgia, 'Times New Roman', 'Noto Serif', serif" font-weight="700" font-size="156" letter-spacing="-10" fill="#ffffff">GB</text>
+    <g fill="#c8a23c">
+      <rect x="78" y="150" width="84" height="9" rx="2.5"/>
+      <rect x="88" y="161" width="10" height="30" rx="1.5"/>
+      <rect x="115" y="161" width="10" height="30" rx="1.5"/>
+      <rect x="142" y="161" width="10" height="30" rx="1.5"/>
+      <rect x="74" y="193" width="92" height="9" rx="2.5"/>
+    </g>
+  </g>
+  <text x="190" y="282" text-anchor="middle" font-family="'Helvetica Neue', Arial, 'Hanken Grotesk', sans-serif" font-weight="700" font-size="52" letter-spacing="-1" fill="#ffffff">GreekBond</text>
+</svg>

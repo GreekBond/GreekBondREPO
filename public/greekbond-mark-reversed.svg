@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 216" role="img" aria-label="GreekBond">
+  <!-- GreekBond monogram, reversed (white GB + gold columns) for dark backgrounds. -->
+  <text x="120" y="132" text-anchor="middle" font-family="Georgia, 'Times New Roman', 'Noto Serif', serif" font-weight="700" font-size="156" letter-spacing="-10" fill="#ffffff">GB</text>
+  <g fill="#c8a23c">
+    <rect x="78" y="150" width="84" height="9" rx="2.5"/>
+    <rect x="88" y="161" width="10" height="30" rx="1.5"/>
+    <rect x="115" y="161" width="10" height="30" rx="1.5"/>
+    <rect x="142" y="161" width="10" height="30" rx="1.5"/>
+    <rect x="74" y="193" width="92" height="9" rx="2.5"/>
+  </g>
+</svg>

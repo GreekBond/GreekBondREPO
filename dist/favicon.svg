@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="GreekBond">
+  <!-- Self-contained app icon: navy rounded square so it reads on any tab background. -->
+  <rect width="64" height="64" rx="13" fill="#111b3d"/>
+  <text x="32" y="41" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-weight="700" font-size="40" letter-spacing="-3" fill="#ffffff">GB</text>
+  <g fill="#c8a23c">
+    <rect x="20" y="45" width="24" height="3" rx="1"/>
+    <rect x="22.5" y="49" width="3.4" height="8"/>
+    <rect x="30.3" y="49" width="3.4" height="8"/>
+    <rect x="38.1" y="49" width="3.4" height="8"/>
+    <rect x="19" y="58" width="26" height="3" rx="1"/>
+  </g>
+</svg>

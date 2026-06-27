@@ -1,0 +1,160 @@
+:root {
+  /* GreekBond chrome, constant */
+  --navy: #111b3d;
+  --navy-700: #1b2858;
+  --navy-600: #283a76;
+  --navy-50: #eceef6;
+  --navy-100: #dde1ef;
+  --gold: #c8a23c;
+  --gold-deep: #a8842a;
+  --gold-soft: #f4ecd4;
+  --gold-line: #e3d09a;
+
+  /* surfaces, warm parchment, ceremony not corporate */
+  --bg: #f4f1e9;
+  --bg-2: #efebe0;
+  --surface: #ffffff;
+  --ink: #1b1d22;
+  --ink-2: #5e636e;
+  --ink-3: #8a8e98;
+  --border: #e4e0d6;
+  --border-2: #ede9df;
+  --success: #2f7d52;
+  --alert: #b23b30;
+
+  /* chapter color, variable, overridden in context (defaults to ΘΔΣ crimson) */
+  --chapter: #7a1f2b;
+  --chapter-ink: #5a1620;
+
+  --radius: 12px;
+  --radius-sm: 8px;
+  --radius-lg: 18px;
+  --font-ui: 'Hanken Grotesk', system-ui, sans-serif;
+  --font-display: 'Newsreader', Georgia, serif;
+  --shadow-sm: 0 1px 2px rgba(17,27,61,.05), 0 1px 3px rgba(17,27,61,.04);
+  --shadow-md: 0 6px 22px rgba(17,27,61,.09);
+  --shadow-lg: 0 18px 50px rgba(17,27,61,.16);
+  --maxw: 1160px;
+
+  /* responsive breakpoints, single source of truth (Session M0).
+     Mirrored in src/lib/breakpoints.js for JS. CSS media queries must hardcode
+     these px (a var() can't be used in a media condition) — keep them in sync.
+     Bands: mobile ≤640 · tablet 641–1024 · desktop ≥1025 */
+  --bp-mobile: 640px;
+  --bp-tablet: 1024px;
+
+  /* motion tokens, single source of truth (Session G) */
+  --motion-fast: 150ms;   /* high-frequency: buttons, nav, tabs, hovers */
+  --motion-base: 200ms;   /* occasional: modals, page changes, list entrances */
+  --motion-slow: 300ms;   /* hard ceiling, rare */
+  --ease-out: cubic-bezier(.22, .61, .36, 1);     /* entrances */
+  --ease-in: cubic-bezier(.55, .06, .68, .19);    /* exits */
+  --ease-in-out: cubic-bezier(.45, .05, .55, .95);
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font-ui);
+  background: var(--bg);
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: 'ss01';
+}
+button { font-family: inherit; cursor: pointer; }
+input, textarea { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+/* Media safety net: replaced media can never blow out its container's width.
+   Global (not mobile-gated) but a no-op at desktop, where nothing exceeds its
+   box today. Deliberately excludes <svg>: icons carry explicit dimensions and
+   max-width could shrink them inside squeezed flex rows. */
+img, video { max-width: 100%; }
+::selection { background: var(--gold-soft); }
+::-webkit-scrollbar { width: 11px; height: 11px; }
+::-webkit-scrollbar-thumb { background: #cfccc2; border-radius: 8px; border: 3px solid var(--bg); }
+::-webkit-scrollbar-thumb:hover { background: #bbb7ab; }
+#root { min-height: 100vh; }
+@keyframes gb-fade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes gb-seal { 0% { transform: scale(.4) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.08) rotate(3deg); opacity: 1; } 100% { transform: scale(1) rotate(0); opacity: 1; } }
+@keyframes gb-pop { from { transform: scale(.96); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+@keyframes gb-spin { to { transform: rotate(360deg); } }
+
+/* list / feed item entrance, mount-only (GPU: opacity + transform only) */
+@keyframes gb-enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+.gb-enter { animation: gb-enter var(--motion-base) var(--ease-out) both; }
+
+/* toast, slide + fade (keeps the -50% X centering throughout) */
+@keyframes gb-toast-in { from { opacity: 0; transform: translate(-50%, 14px); } to { opacity: 1; transform: translate(-50%, 0); } }
+@keyframes gb-toast-out { from { opacity: 1; transform: translate(-50%, 0); } to { opacity: 0; transform: translate(-50%, 10px); } }
+
+/* avatar / uploaded image fade-in on load */
+.gb-img { opacity: 0; transition: opacity var(--motion-base) var(--ease-out); }
+.gb-img.is-loaded { opacity: 1; }
+
+/* Mandatory reduced-motion safety net: neutralizes ALL motion app-wide so even a
+   missed spot is covered. Component code also branches on useReducedMotion(). */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: .001ms !important;
+    animation-delay: 0ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: .001ms !important;
+    scroll-behavior: auto !important;
+  }
+  .gb-img { opacity: 1; }
+}
+
+/* ── Session M1: mobile navigation ──
+   The M0 overflow-x:clip stopgap on .gb-topnav-row is removed: on phones the
+   desktop TopNav row no longer renders at all (TopNav swaps in MobileNav below
+   640px), so there is nothing left to clip.
+
+   Mobile members get a fixed bottom tab bar. Reserve matching space at the foot
+   of the document so the bar never covers the last bit of a scrolled screen
+   (the final post, a list's last row, a submit button). Toggled by MobileNav. */
+@media (max-width: 640px) {
+  body.gb-has-bottomnav { padding-bottom: calc(58px + env(safe-area-inset-bottom)); }
+
+  /* ── Session M2: mobile feed rail strips ──
+     Horizontal snap-scroll strips (bond suggestions, chapters to follow) on the
+     mobile MemberHome feed. Hide the scrollbar — the peeking next card is the
+     affordance, not a scrollbar — without disabling scroll. Scoped to ≤640px and
+     only ever applied by mobile-only components, so the desktop scrollbar styling
+     (the global ::-webkit-scrollbar rules above) is untouched. */
+  .gb-hscroll { scrollbar-width: none; -ms-overflow-style: none; }
+  .gb-hscroll::-webkit-scrollbar { display: none; }
+
+  /* ── Session M4: mobile long-tail stack-downs (all gated ≤640px) ──
+     Each class overrides only grid-template-columns on an element that already
+     declares display:grid + gap inline, so the inline gap is preserved and the
+     desktop layout (above this breakpoint) is byte-for-byte unchanged. Marked
+     !important solely to win over the element's inline grid-template-columns. */
+
+  /* Two-column form/content blocks (the sixteen 1fr 1fr grids) become single. */
+  .gb-stack-mobile { grid-template-columns: 1fr !important; }
+
+  /* Fixed-sidebar dashboard shells (minmax(0,1fr) NNNpx) collapse to one column;
+     the sticky sidebar is also released so it does not float when stacked. */
+  .gb-shell-stack { grid-template-columns: 1fr !important; }
+  .gb-shell-stack > * { position: static !important; top: auto !important; }
+
+  /* Four-tile stat strips become a 2x2 grid (two tiles per row). */
+  .gb-grid-2-mobile { grid-template-columns: repeat(2, 1fr) !important; }
+
+  /* Chapter directory cards: drop the auto-fill floor so a single card never
+     exceeds the narrowest phone viewport. */
+  .gb-cards-280 { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)) !important; }
+
+  /* Right-edge fade signalling a horizontally scrollable table is swipeable.
+     The class goes on a non-scrolling wrapper so the fade stays pinned to the
+     viewport edge rather than scrolling away with the table. */
+  .gb-scroll-fade { position: relative; }
+  .gb-scroll-fade::after { content: ''; position: absolute; top: 0; right: 0; bottom: 0; width: 32px;
+    pointer-events: none; background: linear-gradient(to right, transparent, var(--surface)); }
+}
+
+/* Drawer panel slide-in (from the right) and More bottom-sheet slide-up. Both
+   ride the Session G base token + ease-out; the reduced-motion net above
+   neutralizes them, and the components also branch on useReducedMotion(). */
+@keyframes gb-drawer-in { from { transform: translateX(100%); } to { transform: none; } }
+@keyframes gb-sheet-up { from { transform: translateY(100%); } to { transform: none; } }
