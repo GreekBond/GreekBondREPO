@@ -295,11 +295,15 @@ export async function claimOrCreateProfile(user) {
   } else {
     // Claim a pre-loaded unclaimed row matching the user's verified email. Under
     // RLS a brand-new user can't read other rows or update a NULL-user_id row, so
-    // this runs server-side via a SECURITY DEFINER function (see 0002_rls.sql). It
-    // returns the claimed row, or null if no pre-loaded row matched.
+    // this runs server-side via a SECURITY DEFINER function (see 0002_rls.sql).
+    // It's declared `returns public.profiles`, so on "no match" it returns a NULL
+    // composite — which PostgREST serializes as a row of all-NULL columns
+    // ({ id: null, ... }), NOT JSON null. Gate on a real `id` so that phantom row
+    // falls through to the fresh-insert path instead of becoming a profile whose
+    // id is null (which then blows up the onboarding UPDATE as ?id=eq.null).
     const { data: claimed, error: claimErr } = await supabase.rpc('claim_profile_by_email')
     if (claimErr) throw claimErr
-    if (claimed) {
+    if (claimed && claimed.id) {
       profile = profileFromRow(claimed)
     } else {
       const email = user.email || null
